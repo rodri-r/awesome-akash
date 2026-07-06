@@ -71,7 +71,7 @@ Once deployed and running, open your lease in Akash Console. Look for the **Forw
 Open your SDL and find these two lines:
 
 - Find `REPLACE_AFTER_DEPLOY_WITH_INGRESS_HOSTNAME` (it appears on seeder, web, worker and cron) and replace all four with the `web` URL. Use the bare hostname only, for example `abc123.ingress.yourprovider.com`. Do not include `https://` and do not add a slash at the end.
-- Find `REPLACE_AFTER_DEPLOY_WITH_HOCUSPOCUS_INGRESS_HOSTNAME` and replace it with the `hocuspocus` URL, leave the wss:// and no slash at the end. 
+- Find `REPLACE_AFTER_DEPLOY_WITH_HOCUSPOCUS_INGRESS_HOSTNAME` and replace it with the `hocuspocus` URL in the same format.
 
 Then click **Update Deployment** in Akash Console. Do NOT close and redeploy. Updating keeps the same lease and your data is preserved. Redeploying creates a new lease and wipes everything.
 
@@ -81,9 +81,7 @@ Go to your web URL and log in with `admin` / `admin`. You will be forced to set 
 
 ## Storage note
 
-This SDL uses ephemeral storage for the database. This means the database is wiped if you close the deployment or if the provider restarts it. File attachments are safe because they go directly to R2. The automatic backup covers the database.
-
-For a version with persistent database storage see the persistent variant in this repo (coming soon).
+This SDL uses ephemeral storage for the database. Ephemeral deployments attract significantly more bids on the Akash marketplace than persistent storage deployments, meaning lower costs and more provider choice. The trade-off is that any Update Deployment action or redeployment will wipe your database. This is why having both backup options set up before you start using the platform in production is important. File attachments are safe regardless since they go directly to R2.
 
 ## Backups
 
@@ -107,6 +105,8 @@ curl -X POST https://YOUR_INGRESS_URL/api/v3/backups -H "Authorization: Bearer Y
 ```
 
 You will receive an email with a download link when it is ready. This is the safest full backup option since it includes file attachments that the automatic database backup does not cover.
+
+You can also schedule this command as a cron job on your local machine or inside the `web` container shell on Akash to automate full backups on a schedule.
 
 **Automatic database backup (postgres-s3-backup)**
 
