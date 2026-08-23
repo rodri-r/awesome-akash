@@ -76,6 +76,7 @@ To add a new template/resource:
 - [Bark small](bark-small)
 - [Botpress](botpress)
 - [Buzz Agent](Buzz-Agent)
+- [Buzz OpenCode Agent](Buzz-OpenCode-Agent)
 - [ChatChat](chatchat)
 - [Claude Code](claude-code)
 - [Daila](daila)
