@@ -75,6 +75,7 @@ To add a new template/resource:
 - [BabyAGI-UI](babyagi-ui)
 - [Bark small](bark-small)
 - [Botpress](botpress)
+- [Buzz Agent](Buzz-Agent)
 - [ChatChat](chatchat)
 - [Claude Code](claude-code)
 - [Daila](daila)
