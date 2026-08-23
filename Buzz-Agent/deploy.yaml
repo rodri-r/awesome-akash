@@ -1,0 +1,88 @@
+---
+version: "2.0"
+
+services:
+  buzz-agent:
+    image: rodrirr/alfred:1.2
+    expose:
+      - port: 3000
+        as: 3000
+        proto: tcp
+        to:
+          - global: true
+    env:
+      # Agent Nostr Identity
+      # Generate with: docker run --rm --entrypoint /usr/local/bin/buzz-admin ghcr.io/block/buzz:main generate-key
+      # Each agent needs its own unique keypair, never reuse the relay key
+      - BUZZ_PRIVATE_KEY=REPLACE_WITH_AGENT_SECRET_KEY
+
+      # Relay Connection
+      - BUZZ_RELAY_URL=ws://REPLACE_WITH_RELAY_PROVIDER_URL:PORT
+
+      # Access Control
+      # Your hex pubkey, get it from the Buzz Desktop app
+      - BUZZ_ACP_AGENT_OWNER=REPLACE_WITH_YOUR_HEX_PUBKEY
+      - BUZZ_ACP_RESPOND_TO=owner-only
+
+      # Agent Config
+      - BUZZ_ACP_AGENT_COMMAND=buzz-agent
+      - BUZZ_ACP_MCP_COMMAND=buzz-dev-mcp
+      - BUZZ_ACP_SUBSCRIBE=all
+      - BUZZ_ACP_MAX_TURNS_PER_SESSION=20
+      - BUZZ_ACP_IDLE_TIMEOUT=120
+
+      # LLM Provider - Option A: AkashML (recommended on Akash)
+      - BUZZ_AGENT_PROVIDER=openai
+      - OPENAI_COMPAT_BASE_URL=https://api.akashml.com/v1
+      - OPENAI_COMPAT_API_KEY=REPLACE_WITH_AKASHML_KEY
+      - OPENAI_COMPAT_MODEL=deepseek-ai/DeepSeek-V4-Flash-0731
+
+      # LLM Provider - Option B: Anthropic (comment out Option A first)
+      # - BUZZ_AGENT_PROVIDER=anthropic
+      # - ANTHROPIC_API_KEY=REPLACE_WITH_ANTHROPIC_KEY
+      # - ANTHROPIC_MODEL=claude-sonnet-4-5
+
+      # LLM Provider - Option C: OpenRouter (comment out Option A first)
+      # - BUZZ_AGENT_PROVIDER=openrouter
+      # - OPENROUTER_API_KEY=REPLACE_WITH_OPENROUTER_KEY
+      # - OPENROUTER_MODEL=deepseek/deepseek-chat
+
+      # LLM Provider - Option D: Groq (comment out Option A first)
+      # - BUZZ_AGENT_PROVIDER=openai
+      # - OPENAI_COMPAT_BASE_URL=https://api.groq.com/openai/v1
+      # - OPENAI_COMPAT_API_KEY=REPLACE_WITH_GROQ_KEY
+      # - OPENAI_COMPAT_MODEL=llama-3.3-70b-versatile
+
+    params:
+      storage:
+        agent-data:
+          mount: /data
+
+profiles:
+  compute:
+    buzz-agent:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 8Gi
+        storage:
+          - size: 10Gi
+          - name: agent-data
+            size: 50Gi
+            attributes:
+              persistent: true
+              class: beta3
+
+  placement:
+    dcloud:
+      pricing:
+        buzz-agent:
+          denom: uact
+          amount: 10000
+
+deployment:
+  buzz-agent:
+    dcloud:
+      profile: buzz-agent
+      count: 1
