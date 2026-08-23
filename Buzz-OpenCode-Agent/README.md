@@ -92,6 +92,14 @@ The SDL includes four provider options. AkashML is recommended when running on A
 | `OPENCODE_API_KEY` | LLM provider API key |
 | `OPENCODE_MODEL` | Model ID in the format your provider expects |
 
+## Building the image yourself
+ 
+The Dockerfile and entrypoint script are included if you want to build your own image. The Dockerfile compiles `buzz-acp` and `buzz-cli` from the official Buzz source and installs OpenCode via npm.
+ 
+```bash
+docker buildx build --platform linux/amd64 -t your-username/opencode-agent:1.0 . --push
+```
+
 ## Resources
 
 - [OpenCode GitHub](https://github.com/opencode-ai/opencode)
